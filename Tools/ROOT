@@ -1,0 +1,11 @@
+session "MCP-Tool-Library" = Pure +
+  description "Reusable verifier-native tool infrastructure"
+  theories
+    MCP_Tool_Library
+
+session "MCP-Tool-Library-HOL" in "HOL" = HOL +
+  description "HOL-anchored reusable tool infrastructure"
+  sessions
+    "MCP-Tool-Library"
+  theories
+    MCP_Library

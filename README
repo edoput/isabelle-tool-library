@@ -1,0 +1,80 @@
+Verifier-native tool library
+===========================
+
+This Isabelle2025-2 component packages the existing theory-local tools, codecs,
+context locators, PIDE bridge and cancellation lifecycle independently of the
+MCP server. It provides no server process, JSON-RPC connection, built-in tools,
+or example-tool catalogue. The Scala packages and wire protocol retain their
+existing names.
+
+Inclusion
+---------
+Register this directory as an Isabelle component before your application
+component. Its settings export ISABELLE_MCP_LIBRARY_HOME and
+ISABELLE_MCP_LIBRARY_JAR. Your etc/build.props should require:
+
+    requirements = \
+      env:ISABELLE_SCALA_JAR \
+      env:ISABELLE_MCP_LIBRARY_JAR
+
+Your session ROOT should list MCP-Tool-Library under sessions; import
+"MCP-Tool-Library.MCP_Tool_Library" in a Pure theory. For HOL use the
+MCP-Tool-Library-HOL session and import
+"MCP-Tool-Library-HOL.MCP_Library". The HOL entry point anchors theory data in
+HOL and is the safe default for HOL developments. Declare your own tools with
+the existing mcp_tool/mcp_codec commands.
+
+The library owns etc/options:mcp_bridge_max_reply_bytes; do not redeclare it
+in the application component.
+
+Scala entry points
+------------------
+isabelle.mcp.McpToolData owns the existing result, schema, annotation and
+catalogue types and decoders. McpBridgeOperations constructs tools, runTool
+and checkContext operations; McpBridgeProfile.base retains the existing hello
+requirements. isabelle.mcp.pide.PideBridge provides the existing blocking call
+interface, cancellation port, readiness and shutdown methods.
+
+PideBridge takes PideTransport, host-supplied PideBridgePolicy, a DeadlineScheduler,
+a catalogue root selector, operation names, profile, protocol and diagnostics.
+SessionPideTransport is the existing manual Headless.Session adapter. The
+application owns prover startup, a completed/pinned catalogue root document,
+readiness, and process shutdown. Call awaitReady after the root is available.
+Do not create a second protocol handler for the same result functions in one
+session. Drain closes ML admission process-wide and belongs to host shutdown.
+The host also installs the catalogue notification handler for MCP.tools_changed
+if it needs catalogue-change notifications; the MCP server remains an example.
+
+Invocation routing still uses one pending registry and typed promises. Calls
+may run concurrently; completion/cancellation/deadlines use the existing terminal
+ownership rules. Cancellation can settle the local result before ML stops. There
+is no intermediate response stream, new channel API or new public async API.
+The optional arguments.context locator is resolved in ML after catalogue lookup;
+omitting it uses the catalogue context. The legacy context parameter in tools
+and runTool payloads does not select a different catalogue.
+
+Verification in this repository
+-------------------------------
+Use the project launcher, replacing PROFILE with the chosen installation:
+
+    tools/isabelle --profile PROFILE -- scala_build
+    tools/isabelle --profile PROFILE -- build MCP-Tool-Library MCP-Tool-Library-HOL MCP-Tools-Tests MCP-HOL-Tests
+    tools/isabelle --profile PROFILE -- mcp_test -L scala-unit
+    tools/isabelle --profile PROFILE -- mcp_test -L heap
+    tools/isabelle --profile PROFILE -- mcp_test -L bridge
+
+The library and server have separate manifests/jars; the library manifest has
+no server requirement, and the server compiles against the library jar.
+Automatic PIDE service attachment, independent multi-catalogue clients and
+packaging for remote distribution are later work.
+
+Additional inclusion checks (no server imports in either fixture):
+
+    tools/isabelle --profile PROFILE -- scala mcp_library/Tests/check_scala.scala
+    tools/isabelle --profile PROFILE -- build -d mcp_library/Tests MCP-Library-Inclusion
+
+The Scala check recompiles the library with all checkout-local ambient jars
+excluded, then compiles a consumer in package library_consumer against its
+explicit Isabelle/library requirements. The theory check imports only the
+library HOL entry point and HOL-Library, checks for an empty initial catalogue,
+and declares/invokes its own tool.

@@ -1,0 +1,4 @@
+section "Verifier-native tool library"
+
+public option mcp_bridge_max_reply_bytes : int = 1048576
+  -- "maximum serialized PIDE bridge reply envelope size in bytes"

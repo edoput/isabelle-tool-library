@@ -1,0 +1,12 @@
+title = Verifier-native tool library
+module = lib/mcp_library.jar
+
+requirements = \
+  env:ISABELLE_SCALA_JAR
+
+sources = \
+  src/mcp_pide_bridge.scala \
+  src/mcp_pide_protocol.scala \
+  src/mcp_bridge_operations.scala \
+  src/mcp_deadline_scheduler.scala \
+  src/mcp_tool_data.scala

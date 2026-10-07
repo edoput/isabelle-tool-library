@@ -1,0 +1,7 @@
+title = External-package library inclusion test
+module = lib/consumer.jar
+requirements = \
+  env:ISABELLE_SCALA_JAR \
+  env:ISABELLE_MCP_LIBRARY_JAR
+sources = \
+  src/Consumer.scala

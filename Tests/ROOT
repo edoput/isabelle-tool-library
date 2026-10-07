@@ -1,0 +1,7 @@
+session "MCP-Library-Inclusion" = HOL +
+  description "Include the library without importing the server catalogue"
+  sessions
+    "MCP-Tool-Library-HOL"
+    "HOL-Library"
+  theories
+    Library_Inclusion
