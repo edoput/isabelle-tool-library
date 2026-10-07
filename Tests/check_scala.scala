@@ -1,4 +1,4 @@
-/* Run through tools/isabelle --profile PROFILE -- scala mcp_library/Tests/check_scala.scala */
+/* Run with isabelle scala /absolute/component/path/Tests/check_scala.scala */
 import scala.jdk.CollectionConverters._
 import java.nio.file.Path
 import isabelle.setup.{Build, Environment}
@@ -8,9 +8,10 @@ import isabelle.setup.{Build, Environment}
   // below must not inherit it through the Scala JVM property or project jars.
   System.clearProperty("scala.usejavacp")
   val home = Path.of(Environment.getenv("ISABELLE_MCP_LIBRARY_HOME"))
-  val project = home.getParent.toString + "/"
+  val excluded = List("ISABELLE_MCP_LIBRARY_HOME", "ISABELLE_MCP_HOME", "ISABELLE_MCP_TEST_HOME")
+    .map(Environment.getenv).filter(_.nonEmpty).map(p => Path.of(p).toAbsolutePath.normalize())
   val dependencies = Environment.getenv("ISABELLE_CLASSPATH").split(":")
-    .filter(s => s.nonEmpty && !s.startsWith(project))
+    .filter(s => s.nonEmpty && !excluded.exists(root => Path.of(s).toAbsolutePath.normalize().startsWith(root)))
     .map(Path.of(_)).toList.asJava
   Build.build(dependencies, System.out, Build.component_context(home), true)
   Build.build(dependencies, System.out,

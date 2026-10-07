@@ -53,28 +53,21 @@ The optional arguments.context locator is resolved in ML after catalogue lookup;
 omitting it uses the catalogue context. The legacy context parameter in tools
 and runTool payloads does not select a different catalogue.
 
-Verification in this repository
--------------------------------
-Use the project launcher, replacing PROFILE with the chosen installation:
+Standalone verification
+-----------------------
+Use the Isabelle2025-2 installation where this component is registered:
 
-    tools/isabelle --profile PROFILE -- scala_build
-    tools/isabelle --profile PROFILE -- build MCP-Tool-Library MCP-Tool-Library-HOL MCP-Tools-Tests MCP-HOL-Tests
-    tools/isabelle --profile PROFILE -- mcp_test -L scala-unit
-    tools/isabelle --profile PROFILE -- mcp_test -L heap
-    tools/isabelle --profile PROFILE -- mcp_test -L bridge
+    isabelle components -u /absolute/path/to/isabelle-tool-library
+    isabelle scala /absolute/path/to/isabelle-tool-library/Tests/check_scala.scala
+    isabelle build MCP-Tool-Library MCP-Tool-Library-HOL
+    isabelle build -d /absolute/path/to/isabelle-tool-library/Tests MCP-Library-Inclusion
 
-The library and server have separate manifests/jars; the library manifest has
-no server requirement, and the server compiles against the library jar.
-Automatic PIDE service attachment, independent multi-catalogue clients and
-packaging for remote distribution are later work.
+The Scala check recompiles the library and an external-package consumer with
+library/server/test jars excluded from ambient dependencies. The consumer uses
+explicit Isabelle/library requirements. The theory test imports only the library
+HOL entry point and HOL-Library, checks for an empty initial catalogue, then
+declares and invokes its own tool.
 
-Additional inclusion checks (no server imports in either fixture):
-
-    tools/isabelle --profile PROFILE -- scala mcp_library/Tests/check_scala.scala
-    tools/isabelle --profile PROFILE -- build -d mcp_library/Tests MCP-Library-Inclusion
-
-The Scala check recompiles the library with all checkout-local ambient jars
-excluded, then compiles a consumer in package library_consumer against its
-explicit Isabelle/library requirements. The theory check imports only the
-library HOL entry point and HOL-Library, checks for an empty initial catalogue,
-and declares/invokes its own tool.
+The server's separate repository owns server regression tests and its launcher.
+Automatic PIDE attachment and independent multi-catalogue clients remain deferred.
+See PROVENANCE for the exact extraction source; this extraction assigns no license.
