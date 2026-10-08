@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol_properties>
+  <model>
+    <description>The model consists of three interacting state machines: the MCP server (caller), the library, and the verifier.</description>
+    <state_machines>
+      <state_machine>
+        <name>MCP server (caller)</name>
+        <role>Invokes tools and requests cancellation of particular invocations.</role>
+      </state_machine>
+      <state_machine>
+        <name>library</name>
+        <role>Owns invocation outcomes and protocol bookkeeping.</role>
+      </state_machine>
+      <state_machine>
+        <name>verifier</name>
+        <role>Owns execution state. Tool bodies are abstract; execution termination is internal state of the verifier state machine.</role>
+      </state_machine>
+    </state_machines>
+    <interactions>For describing these protocol properties, interactions between the state machines are modeled as messages, including interactions between the caller and the library. This is a modeling abstraction, not a change to the implementation or API.</interactions>
+    <cancellation_semantics>
+      <rule>When the library handles a caller cancellation request for an invocation with no outcome, it assigns cancelled without waiting for a verifier acknowledgement. Later messages cannot change that outcome.</rule>
+      <rule>When the library handles a verifier success or failure result for an invocation with no outcome, it assigns the corresponding outcome. If an outcome has already been assigned, subsequent results and cancellation requests leave it unchanged.</rule>
+      <acknowledgement>An acknowledgement, if ever present, means receipt of a cancellation request only; it does not confirm execution termination. The current implementation has no cancellation acknowledgement.</acknowledgement>
+      <scope>These rules provide model semantics and context for the properties below; they are not additional properties or requests to change protocol behavior.</scope>
+    </cancellation_semantics>
+  </model>
+  <assumptions>
+    <assumption>Progress assumes that library execution continues and enabled handling is not postponed forever.</assumption>
+    <non_assumption>The model does not assume that every tool terminates or that every invocation spontaneously acquires an outcome.</non_assumption>
+  </assumptions>
+  <properties>
+    <property classification="safety">
+      <name>outcome persistence</name>
+      <definition>Once an invocation has an outcome, that outcome remains unchanged, including when later messages arrive.</definition>
+    </property>
+    <property classification="safety">
+      <name>invocation isolation</name>
+      <definition>A result or cancellation for one invocation affects only that invocation's outcome.</definition>
+      <scope>This is isolation of protocol bookkeeping and outcomes, not isolation of tool computations or verifier state.</scope>
+    </property>
+    <property classification="liveness">
+      <name>outcome progress</name>
+      <definition>If an invocation has no outcome and the library receives either a success/failure result from the verifier or a cancellation request from the MCP server, the invocation eventually acquires an outcome.</definition>
+      <interpretation>A cancellation request handled while no outcome exists assigns cancelled without waiting for verifier acknowledgement. A result handled while no outcome exists assigns the corresponding outcome. Competing events do not require two incompatible eventual outcomes: an outcome already assigned remains unchanged.</interpretation>
+      <assumption>Library execution continues and enabled handling is not postponed forever.</assumption>
+    </property>
+  </properties>
+</protocol_properties>
