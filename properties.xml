@@ -38,6 +38,11 @@
       <definition>A result or cancellation for one invocation affects only that invocation's outcome.</definition>
       <scope>This is isolation of protocol bookkeeping and outcomes, not isolation of tool computations or verifier state.</scope>
     </property>
+    <property classification="safety" category="implementation scope">
+      <name>at-most-once execution</name>
+      <definition>For each invocation, the verifier starts its tool computation at most once.</definition>
+      <scope>This is a verification target, not a claim already proved; a new invocation of the same tool is separate work.</scope>
+    </property>
     <property classification="liveness">
       <name>outcome progress</name>
       <definition>If an invocation has no outcome and the library receives either a success/failure result from the verifier or a cancellation request from the MCP server, the invocation eventually acquires an outcome.</definition>
