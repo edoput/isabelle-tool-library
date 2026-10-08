@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glossary>
+  <entry>
+    <name>outcome</name>
+    <definition>The result the library returns to the application for an invocation.</definition>
+  </entry>
+  <entry>
+    <name>outcome persistence</name>
+    <definition>Once an invocation has an outcome, that outcome remains unchanged, including when later messages arrive.</definition>
+  </entry>
+  <entry>
+    <name>detected failure</name>
+    <definition>A concrete failure observed by the library, such as notification that the prover connection has terminated.</definition>
+  </entry>
+</glossary>
