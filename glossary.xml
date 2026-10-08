@@ -24,4 +24,8 @@
     <name>execution termination</name>
     <definition>The invocation's computation in the verifier has stopped. This is internal state of the verifier state machine.</definition>
   </entry>
+  <entry>
+    <name>invocation isolation</name>
+    <definition>A result or cancellation for one invocation affects only that invocation's outcome.</definition>
+  </entry>
 </glossary>
