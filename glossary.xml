@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <glossary>
   <entry>
+    <name>tool invocation</name>
+    <definition>The MCP server requests that the library invoke a tool.</definition>
+  </entry>
+  <entry>
+    <name>invocation forwarding</name>
+    <definition>The library forwards a tool invocation to the verifier.</definition>
+  </entry>
+  <entry>
+    <name>invocation result</name>
+    <definition>The verifier sends the result of a tool invocation to the library.</definition>
+  </entry>
+  <entry>
+    <name>result forwarding</name>
+    <definition>The library forwards an invocation result to the MCP server.</definition>
+  </entry>
+  <entry>
     <name>outcome</name>
     <definition>The result the library returns to the application for an invocation.</definition>
   </entry>
