@@ -12,4 +12,16 @@
     <name>detected failure</name>
     <definition>A concrete failure observed by the library, such as notification that the prover connection has terminated.</definition>
   </entry>
+  <entry>
+    <name>cancellation request</name>
+    <definition>A request to stop a particular invocation. Making the request does not establish that execution has stopped.</definition>
+  </entry>
+  <entry>
+    <name>cancellation acknowledgement</name>
+    <definition>A reply confirming receipt of a cancellation request.</definition>
+  </entry>
+  <entry>
+    <name>execution termination</name>
+    <definition>The invocation's computation in the verifier has stopped. This is internal state of the verifier state machine.</definition>
+  </entry>
 </glossary>
