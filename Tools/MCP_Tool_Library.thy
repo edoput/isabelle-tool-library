@@ -152,7 +152,7 @@ val _ =
     (let
       val description = clause_block "description" Parse.embedded;
       val fields = Scan.optional (Parse.$$$ "for" |--
-        Parse.and_list1 (Parse.short_ident -- Parse.embedded)) [];
+        Parse.and_list1 (Parse.name -- Parse.embedded)) [];
       val type_signature = Parse.$$$ "::" |-- Parse.embedded_input;
       datatype form = Run of Input.source | Capture of Input.source;
       val implementation = Parse.$$$ "=" |--

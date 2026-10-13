@@ -9,3 +9,8 @@ session "MCP-Tool-Library-HOL" in "HOL" = HOL +
     "MCP-Tool-Library"
   theories
     MCP_Library
+
+session "MCP-Tool-Library-Tests" in "Tests" = "MCP-Tool-Library" +
+  description "Focused syntax tests for the reusable tool library"
+  theories
+    MCP_Quoted_Field_Tests
