@@ -52,26 +52,57 @@ fun form_tag Run = "run"
   | form_tag Builtin = "builtin"
   | form_tag Capture = "capture";
 
-type annotations =
-  {read_only: bool option, idempotent: bool option, destructive: bool option,
-   open_world: bool option};
-val default_annotations : annotations =
-  {read_only = NONE, idempotent = NONE, destructive = NONE, open_world = SOME false};
-val read_only : annotations =
-  {read_only = SOME true, idempotent = SOME true, destructive = NONE, open_world = SOME false};
-val read_only_non_idempotent : annotations =
-  {read_only = SOME true, idempotent = SOME false, destructive = NONE, open_world = SOME false};
-val mutating : annotations =
-  {read_only = SOME false, idempotent = SOME false, destructive = NONE, open_world = SOME false};
-val idempotent_mutating : annotations =
-  {read_only = SOME false, idempotent = SOME true, destructive = NONE, open_world = SOME false};
-val destructive : annotations =
-  {read_only = SOME false, idempotent = SOME false, destructive = SOME true,
-   open_world = SOME false};
+type annotations = {
+   read_only: bool option,
+   idempotent: bool option,
+   destructive: bool option,
+   open_world: bool option
+};
+val default_annotations : annotations = {
+   read_only = NONE,
+   idempotent = NONE,
+   destructive = NONE,
+   open_world = SOME false
+};
+val read_only : annotations = {
+   read_only = SOME true,
+   idempotent = SOME true,
+   destructive = NONE,
+   open_world = SOME false
+};
+val read_only_non_idempotent : annotations = {
+   read_only = SOME true,
+   idempotent = SOME false,
+   destructive = NONE,
+   open_world = SOME false
+};
+val mutating : annotations = {
+   read_only = SOME false,
+   idempotent = SOME false,
+   destructive = NONE,
+   open_world = SOME false
+};
+val idempotent_mutating : annotations = {
+   read_only = SOME false,
+   idempotent = SOME true,
+   destructive = NONE,
+   open_world = SOME false
+};
+val destructive : annotations = {
+   read_only = SOME false,
+   idempotent = SOME false,
+   destructive = SOME true,
+   open_world = SOME false
+};
 
-type tool =
-  {description: string, schema: MCP_Codec.schema, form: form, annotations: annotations,
-   run: Proof.context -> MCP_Codec.value -> string};
+type tool = {
+   description: string,
+   schema: MCP_Codec.schema,
+   form: form,
+   annotations: annotations,
+   run: Proof.context -> MCP_Codec.value -> string
+};
+
 structure Registry =
   MCP_Registry(val kind = "mcp_tool" val changed = "MCP.tools_changed" type value = tool);
 open Registry;

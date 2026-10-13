@@ -17,6 +17,14 @@
     <definition>The library forwards an invocation result to the MCP server.</definition>
   </entry>
   <entry>
+    <name>cancellation invocation</name>
+    <definition>The MCP server requests that the library cancel a particular tool invocation.</definition>
+  </entry>
+  <entry>
+    <name>cancellation forwarding</name>
+    <definition>The library forwards a cancellation request for a particular tool invocation to the verifier.</definition>
+  </entry>
+  <entry>
     <name>outcome</name>
     <definition>The result the library returns to the application for an invocation.</definition>
   </entry>

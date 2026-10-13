@@ -1,8 +1,11 @@
 signature MCP_CODEC =
 sig
-  datatype schema =
-    String | Bool | Integer | Array of schema |
-    Object of {name: string, schema: schema, description: string, required: bool} list
+  datatype schema = 
+    String |
+    Bool |
+    Integer |
+    Array of schema |
+    Object of { name: string, schema: schema, description: string, required: bool} list
   datatype value =
     V_Null | V_String of string | V_Bool of bool | V_Integer of int |
     V_Array of value list | V_Object of (string * value) list
