@@ -1,62 +1,77 @@
-Verifier-native tool library
+Isabelle tool library
 ===========================
 
-This Isabelle2025-2 component packages the existing theory-local tools, codecs,
-context locators, PIDE bridge and cancellation lifecycle independently of the
-MCP server. It provides no server process, JSON-RPC connection, built-in tools,
-or example-tool catalogue. The Scala packages and wire protocol retain their
-existing names.
+This project allows MCP server developers to make their MCP server user-extensible:
+users of an MCP server can define their own MCP tools by writing Isabelle/ML instead
+of changing the MCP server.
 
-Inclusion
----------
-Register this directory as an Isabelle component before your application
-component. Its settings export ISABELLE_MCP_LIBRARY_HOME and
-ISABELLE_MCP_LIBRARY_JAR. Your etc/build.props should require:
+To achieve this, this project implements two things:
 
-    requirements = \
-      env:ISABELLE_SCALA_JAR \
-      env:ISABELLE_MCP_LIBRARY_JAR
+- A reusable Scala library for the development of MCP servers that can invoke MCP tools in the verifier process
+- A Isabelle/ML library to react to MCP tools invocation in the verifier
 
-Your session ROOT should list MCP-Tool-Library under sessions; import
-"MCP-Tool-Library.MCP_Tool_Library" in a Pure theory. For HOL use the
-MCP-Tool-Library-HOL session and import
-"MCP-Tool-Library-HOL.MCP_Library". The HOL entry point anchors theory data in
-HOL and is the safe default for HOL developments. Declare your own tools with
-the existing mcp_tool/mcp_codec commands.
+# Scala library
 
-The library owns etc/options:mcp_bridge_max_reply_bytes; do not redeclare it
-in the application component.
+The Scala library API defines how the MCP server and verifier will interact
+for the purpose of defining tools, invoking them and cancelling invocation.
 
-Scala entry points
-------------------
-isabelle.mcp.McpToolData owns the existing result, schema, annotation and
-catalogue types and decoders. McpBridgeOperations constructs tools, runTool
-and checkContext operations; McpBridgeProfile.base retains the existing hello
-requirements. isabelle.mcp.pide.PideBridge provides the existing blocking call
-interface, cancellation port, readiness and shutdown methods.
+# Isabelle/ML library
 
-PideBridge takes PideTransport, host-supplied PideBridgePolicy, a DeadlineScheduler,
-a catalogue root selector, operation names, profile, protocol and diagnostics.
-SessionPideTransport accepts an isabelle.Session, including Headless.Session and
-application-owned PIDE sessions. It uses the base session protocol interface. The
-application owns prover startup, a completed/pinned catalogue root document,
-readiness, and process shutdown. Call awaitReady after the root is available.
-Do not create a second protocol handler for the same result functions in one
-session. Drain closes ML admission process-wide and belongs to host shutdown.
-The host also installs the catalogue notification handler for MCP.tools_changed
-if it needs catalogue-change notifications; the MCP server remains an example.
+A user of this library can define MCP tools by writing Isabelle/ML programs as follows:
 
-Invocation routing still uses one pending registry and typed promises. Calls
-may run concurrently; completion/cancellation/deadlines use the existing terminal
-ownership rules. Cancellation can settle the local result before ML stops. There
-is no intermediate response stream, new channel API or new public async API.
-The optional arguments.context locator is resolved in ML after catalogue lookup;
-omitting it uses the catalogue context. The legacy context parameter in tools
-and runTool payloads does not select a different catalogue.
+```
+theory Example_Tools
+imports
+  MCP_Tools
+begin
+
+mcp_tool hello_world
+  (description "Return a hello-world greeting")
+  :: "unit"
+  = run \<open>fn _ => fn () => "Hello, world!"\<close>
+
+mcp_tool hello_name
+  (description "Greet a person by name")
+  for name "Name of the person to greet" :: "string"
+  = run \<open>fn _ => fn {name} => "Hello, " ^ name ^ "!"\<close>
+
+end
+```
+
+See the `Examples` directory for more.
+
+# User-extensible MCP servers 
+
+Because MCP tools can be define in theories we can now implement a user-extensible MCP server.
+
+# Compatibility
+
+This library is a Isabelle2025-2 component. It will be updated to newer versions of the
+Isabelle theorem prover as long as the author needs it.
+
+# What can you do
+
+## I am a MCP server developer
+
+Use this library in your MCP server to let your users implement their own tools. Read [DEVELOP_MCP](https://github.com/edoput/isabelle-tool-library/DEVELOP_MCP) for documentation about including this library in your MCP server.
+
+## I am a user
+
+There are two MCP servers that you can use.
+
+- [edoput/isabelle-pide-mcp](https://github.com/edoput/isabelle-pide-mcp) is a fork of [PIDE MCP](https://github.com/kappelmann/isabelle-pide-mcp) that uses this library to implement /user tools/.
+- [edoput/pide-mcp](https://github.com/edoput/pide-mcp) the original project from which this library was extracted.
+
+If you want to develop your own tools you may want to read [DEVELOP_TOOL](https://github.com/edoput/isabelle-tool-library/DEVELOP_TOOL).
+
+# History of this library
+
+When exctracting this library from [edoput/pide-mcp](https://github.com/edoput/pide-mcp) I have decided to not preserve history. See PROVENANCE for the exact extraction source.
 
 Standalone verification
 -----------------------
-Use the Isabelle2025-2 installation where this component is registered:
+
+Use the Isabelle installation where this component is registered:
 
     isabelle components -u /absolute/path/to/isabelle-tool-library
     isabelle scala /absolute/path/to/isabelle-tool-library/Tests/check_scala.scala
@@ -68,7 +83,3 @@ library/server/test jars excluded from ambient dependencies. The consumer uses
 explicit Isabelle/library requirements. The theory test imports only the library
 HOL entry point and HOL-Library, checks for an empty initial catalogue, then
 declares and invokes its own tool.
-
-The server's separate repository owns server regression tests and its launcher.
-Automatic PIDE attachment and independent multi-catalogue clients remain deferred.
-See PROVENANCE for the exact extraction source; this extraction assigns no license.

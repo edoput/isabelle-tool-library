@@ -1,0 +1,6 @@
+packages the existing theory-local tools, codecs,
+context locators, PIDE bridge and cancellation lifecycle independently of the
+MCP server. It provides no server process, JSON-RPC connection, built-in tools,
+or example-tool catalogue. The Scala packages and wire protocol retain their
+existing names.
+
