@@ -185,7 +185,7 @@ trait BridgeOperation[A] {
 /** Replaceable byte delivery only. send enqueues the command or fails; it
   * never waits for remote execution, though an implementation may deliver a
   * reply synchronously/reentrantly. The bridge owns call state and codecs;
-  * the composition root retains ownership of Headless.Session.stop.
+  * the composition root retains ownership of Session.stop.
   */
 trait PideTransport {
   def start(receive: PideTransport.Inbound => Unit,
@@ -228,7 +228,7 @@ private[mcp] object SessionPideTransport {
 
 /** Production data plane for a known set of protocol-result functions. */
 final class SessionPideTransport(
-  session: Headless.Session,
+  session: Session,
   resultFunctions: Set[String]
 ) extends PideTransport {
   import PideTransport._
@@ -296,7 +296,7 @@ final class SessionPideTransport(
   def send(outbound: Outbound): Unit = synchronized {
     if (!started) throw new IllegalStateException("PIDE transport is not started")
     if (closed) throw new IllegalStateException("PIDE transport is closed")
-    /* protocol_command_raw posts work to the Headless session manager: this
+    /* protocol_command_raw posts work to the session manager: this
        is enqueue-or-fail, not a wait for ML execution or its reply. */
     session.protocol_command_raw(outbound.command, outbound.arguments)
   }

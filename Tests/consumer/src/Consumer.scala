@@ -1,13 +1,16 @@
 /* This package intentionally has no isabelle.mcp private-package privileges. */
 package library_consumer
 
-import isabelle.{Headless, JSON}
+import isabelle.{Headless, JSON, Session}
 import isabelle.mcp.{McpBridgeOperations, McpBridgeProfile, McpToolData}
 import isabelle.mcp.control.DeadlineScheduler
 import isabelle.mcp.pide._
 
 object Consumer {
   def transport(session: Headless.Session): PideTransport =
+    new SessionPideTransport(session, PideBridgeV1.resultFunctions)
+
+  def document_transport(session: Session): PideTransport =
     new SessionPideTransport(session, PideBridgeV1.resultFunctions)
 
   def bridge(transport: PideTransport, policy: PideBridgePolicy,

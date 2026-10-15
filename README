@@ -37,7 +37,8 @@ interface, cancellation port, readiness and shutdown methods.
 
 PideBridge takes PideTransport, host-supplied PideBridgePolicy, a DeadlineScheduler,
 a catalogue root selector, operation names, profile, protocol and diagnostics.
-SessionPideTransport is the existing manual Headless.Session adapter. The
+SessionPideTransport accepts an isabelle.Session, including Headless.Session and
+application-owned PIDE sessions. It uses the base session protocol interface. The
 application owns prover startup, a completed/pinned catalogue root document,
 readiness, and process shutdown. Call awaitReady after the root is available.
 Do not create a second protocol handler for the same result functions in one
