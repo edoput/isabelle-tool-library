@@ -1,0 +1,18 @@
+session "MCP-Tool-Library-Example" = HOL +
+  description "Minimal verifier-native MCP tool example"
+  sessions
+    "MCP-Tool-Library-HOL"
+  theories
+    Basic_Tools
+    Shout
+
+session "MCP-Tool-Library-Paper-Examples" in "Paper" = HOL +
+  description "Verifier-resident tools used in the MCP paper"
+  sessions
+    "MCP-Tool-Library-HOL"
+  theories
+    Paper_Proof_Fixture
+    Paper_Signature_Fixture
+    Proof_Tasks
+    Change_Detection
+    Paper_Tools

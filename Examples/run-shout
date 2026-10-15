@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Run the verifier-native example without starting an MCP server.
+set -euo pipefail
+
+component_dir="$(cd "$(dirname "$0")/.." && pwd)"
+isabelle build -d "$component_dir" MCP-Tool-Library-Example
