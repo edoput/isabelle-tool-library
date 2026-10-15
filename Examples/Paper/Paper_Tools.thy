@@ -1,5 +1,5 @@
 theory Paper_Tools
-  imports MCP_Task_List MCP_Diff Paper_Proof_Fixture Paper_Signature_Fixture
+  imports Proof_Tasks Change_Detection Paper_Proof_Fixture Paper_Signature_Fixture
 begin
 
 text \<open>Catalogue root for the paper's verifier-resident example tools.
